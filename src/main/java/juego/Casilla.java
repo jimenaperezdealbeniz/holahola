@@ -8,7 +8,7 @@ public class Casilla implements Serializable {
     @Expose private int fila, columna;
     @Expose private int costeMovimiento = 1;
     @Expose private int defensaModificador = 0;
-    @Expose public Unidad unidadActual;
+    @Expose private Unidad unidadActual;
 
     public Casilla() {}
     public Casilla(int fila, int columna) {
@@ -25,7 +25,7 @@ public class Casilla implements Serializable {
         this.unidadActual = unidadActual;
     }
 
-    public void removerUnidadActual() {
+    public void eliminarUnidadActual() {
         this.unidadActual = null;
     }
 

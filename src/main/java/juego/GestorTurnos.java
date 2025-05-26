@@ -2,10 +2,13 @@ package juego;
 import com.google.gson.annotations.Expose;
 import estructuras.*;
 
+import java.io.Serializable;
 
-public class GestorTurnos {
-   @Expose
-   private MiCola<Jugador> colaTurnos;
+
+public class GestorTurnos implements Serializable {
+   @Expose private MiCola<Jugador> colaTurnos;
+
+   public GestorTurnos() {}
 
     public GestorTurnos(Jugador jugador1, Jugador jugador2) {
         this.colaTurnos = new MiColaEnlazada<>();
@@ -15,6 +18,10 @@ public class GestorTurnos {
 
     public Jugador obtenerJugadorActual() {
         return colaTurnos.frente();
+    }
+
+    public MiCola<Jugador> getColaTurnos() { // Getter necesario para Gson o para depuración
+        return colaTurnos;
     }
 
     public void pasarTurno() {
