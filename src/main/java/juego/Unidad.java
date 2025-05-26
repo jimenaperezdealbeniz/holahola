@@ -1,13 +1,21 @@
 package juego;
-public abstract class Unidad {
-    protected int hp;
-    protected int ataque;
-    protected int defensa;
-    protected int rangoMovimiento;
-    protected int rangoAtaque;
-    protected Posicion posicion;
-    protected String nombre;
 
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
+
+public abstract class Unidad implements Serializable {
+    @Expose protected String nombre;
+    @Expose protected int hp;
+    @Expose protected int ataque;
+    @Expose protected int defensa;
+    @Expose protected int rangoMovimiento;
+    @Expose protected int rangoAtaque;
+    @Expose protected Posicion posicion;
+
+    public Unidad() {
+        this.posicion = new Posicion(); // Inicializar para evitar NPE
+    }
     public Unidad(String nombre,int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque) {
         this.nombre = nombre;
         this.hp = hp;
@@ -42,11 +50,23 @@ public abstract class Unidad {
     public int getRangoAtaque() { return rangoAtaque; }
     public void setRangoAtaque(int rangoAtaque) { this.rangoAtaque = rangoAtaque; }
 
+    public void setX(int x) { this.posicion.setX(x); }
     public int getX() { return posicion.getX(); }
 
+    public void setY(int y) { this.posicion.setY(y); }
     public int getY() { return posicion.getY(); }
 
     public Posicion getPosicion() {
         return posicion;
+    }
+    public boolean estaViva() {
+        return hp > 0;
+    }
+
+    public void recibirDano(int dano) {
+        this.hp -= dano;
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
     }
 }

@@ -1,29 +1,52 @@
 package juego;
 
-import java.util.Objects;
+import java.io.Serializable;
+import com.google.gson.annotations.Expose;
+import java.util.Objects; // Para Objects.hash y Objects.equals
 
-public class Posicion {
-    private int x;
-    private int y;
+public class Posicion implements Serializable {
+    @Expose private int x;
+    @Expose private int y;
 
     public Posicion(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public int distanciaA(Posicion otra) {
-        return Math.abs(this.x - otra.x) + Math.abs(this.y - otra.y); // Distancia Manhattan
+    // Constructor vacío para Gson
+    public Posicion() {}
+
+    public int getX() {
+        return x;
     }
 
-    // Getters
-    public int getX() { return x; }
-    public int getY() { return y; }
+    public int getY() {
+        return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    // Calcular distancia Manhattan
+    public int distanciaA(Posicion otraPosicion) {
+        return Math.abs(this.x - otraPosicion.x) + Math.abs(this.y - otraPosicion.y);
+    }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Posicion posicion = (Posicion) obj;
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Posicion posicion = (Posicion) o;
         return x == posicion.x && y == posicion.y;
     }
 

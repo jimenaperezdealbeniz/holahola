@@ -3,11 +3,14 @@ package juego;
 import com.google.gson.annotations.Expose;
 import estructuras.*;
 
+import java.io.Serializable;
 
-public class Jugador {
+
+public class Jugador implements Serializable {
     @Expose private String nombre;
     @Expose private MiLista<Unidad> unidades;
 
+    public Jugador(){this.unidades = new MiListaEnlazada<>();}
     public Jugador(String nombre) {
         this.nombre = nombre;
         this.unidades = new MiListaEnlazada<>();
