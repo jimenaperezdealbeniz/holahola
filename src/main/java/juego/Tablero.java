@@ -27,7 +27,9 @@ public class Tablero {
             }
         }
     }
-
+    public boolean estaDentroDeLimites(int fila, int columna) {
+        return fila >= 0 && fila < filas && columna >= 0 && columna < columnas;
+    }
     public Casilla getCasilla(int fila, int columna) {
         if (fila >= 0 && fila < filas && columna >= 0 && columna < columnas) {
             return casillas[fila][columna];
