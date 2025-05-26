@@ -11,4 +11,5 @@ public interface MiLista<T> extends Iterable<T> {
     void limpiar();
     boolean contiene(T elemento);
     int indiceDe(T elemento);
+    void agregarAlPrincipio(T elemento);
 }

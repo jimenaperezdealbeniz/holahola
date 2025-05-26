@@ -1,15 +1,17 @@
 package estructuras;
 
+import java.io.Serializable; // Añadir para serialización, si tu lista se serializará
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class MiListaEnlazada<T> implements MiLista<T> {
+public class MiListaEnlazada<T> implements MiLista<T>, Serializable { // Implementa Serializable
 
     private Nodo<T> cabeza;
     private Nodo<T> cola;
     private int tamano;
 
-    private static class Nodo<T> {
+    // Asegúrate de que el Nodo también sea Serializable si es posible o manejas su serialización con Gson
+    private static class Nodo<T> implements Serializable { // El Nodo también debería ser Serializable
         T dato;
         Nodo<T> siguiente;
 
@@ -24,6 +26,21 @@ public class MiListaEnlazada<T> implements MiLista<T> {
         this.cola = null;
         this.tamano = 0;
     }
+
+    // --- Nuevo método: agregarAlPrincipio ---
+    public void agregarAlPrincipio(T elemento) {
+        Nodo<T> nuevoNodo = new Nodo<>(elemento);
+        if (estaVacia()) {
+            cabeza = nuevoNodo;
+            cola = nuevoNodo;
+        } else {
+            nuevoNodo.siguiente = cabeza; // El nuevo nodo apunta a la antigua cabeza
+            cabeza = nuevoNodo;          // La cabeza ahora es el nuevo nodo
+        }
+        tamano++;
+    }
+    // ------------------------------------
+
 
     @Override
     public void agregar(T elemento) {
@@ -43,22 +60,21 @@ public class MiListaEnlazada<T> implements MiLista<T> {
         if (indice < 0 || indice > tamano) {
             throw new IndexOutOfBoundsException("Índice fuera de límites: " + indice);
         }
+        if (indice == 0) { // Si el índice es 0, usar el nuevo método
+            agregarAlPrincipio(elemento);
+            return;
+        }
         if (indice == tamano) {
             agregar(elemento);
             return;
         }
         Nodo<T> nuevoNodo = new Nodo<>(elemento);
-        if (indice == 0) {
-            nuevoNodo.siguiente = cabeza;
-            cabeza = nuevoNodo;
-        } else {
-            Nodo<T> actual = cabeza;
-            for (int i = 0; i < indice - 1; i++) {
-                actual = actual.siguiente;
-            }
-            nuevoNodo.siguiente = actual.siguiente;
-            actual.siguiente = nuevoNodo;
+        Nodo<T> actual = cabeza;
+        for (int i = 0; i < indice - 1; i++) {
+            actual = actual.siguiente;
         }
+        nuevoNodo.siguiente = actual.siguiente;
+        actual.siguiente = nuevoNodo;
         tamano++;
     }
 

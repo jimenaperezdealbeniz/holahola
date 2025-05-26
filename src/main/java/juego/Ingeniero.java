@@ -1,12 +1,7 @@
 package juego;
 public class Ingeniero extends Unidad {
-    public Ingeniero() {
+    public Ingeniero(String nombre) {
         // HP, Ataque, Defensa, RangoMovimiento, RangoAtaque
-        super(120, 15, 10, 3, 1);
-    }
-
-    @Override
-    public String getNombre() {
-        return "Ingeniero";
+        super(nombre,120, 15, 10, 3, 1);
     }
 }

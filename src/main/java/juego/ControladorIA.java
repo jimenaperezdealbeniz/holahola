@@ -1,7 +1,7 @@
 package juego;
 
 import estructuras.MiLista;
-import estructuras.MiListaEnlazada;
+
 
 import java.util.Random;
 
@@ -66,7 +66,6 @@ public class ControladorIA {
         }
         return enemigoMasCercanoEnRango;
     }
-
     private void moverHaciaEnemigoCercano(Unidad unidadIA) {
         Jugador oponente = (partida.getJugador1() == jugadorIA) ? partida.getJugador2() : partida.getJugador1();
         MiLista<Unidad> unidadesOponente = oponente.getUnidades();
@@ -78,15 +77,19 @@ public class ControladorIA {
         Unidad enemigoObjetivo = null;
         int distanciaMinima = Integer.MAX_VALUE;
 
-        // Encontrar el enemigo más cercano en términos de distancia en el tablero (no solo Manhattan)
-        for (Unidad enemigo : unidadesOponente) {
+        // Encontrar el enemigo más cercano en términos de distancia en el tablero (coste de ruta BFS)
+        for (int i = 0; i < unidadesOponente.tamano(); i++) {
+            Unidad enemigo = unidadesOponente.obtener(i);
             // Usar BFS para encontrar la ruta más corta al enemigo
             Casilla inicio = partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY());
             Casilla destinoEnemigo = partida.getTablero().getCasilla(enemigo.getX(), enemigo.getY());
+
+            // getRutaBFS devuelve null si no hay ruta o si el destino está ocupado por otra unidad que no sea el objetivo
             MiLista<Casilla> ruta = partida.getTablero().getRutaBFS(inicio, destinoEnemigo, unidadIA);
 
-            if (ruta != null && ruta.tamano() < distanciaMinima) {
-                distanciaMinima = ruta.tamano();
+            // Importante: Si la ruta es nula o vacía, significa que no se puede llegar al enemigo
+            if (ruta != null && !ruta.estaVacia() && ruta.tamano() < distanciaMinima) {
+                distanciaMinima = ruta.tamano(); // El tamaño de la ruta es la distancia en pasos
                 enemigoObjetivo = enemigo;
             }
         }
@@ -98,34 +101,28 @@ public class ControladorIA {
 
             if (ruta != null && !ruta.estaVacia()) {
                 // Mover la unidad el máximo de casillas posible dentro de su rango de movimiento
-                // y hacia el enemigo.
-                // La ruta incluye el destino. El primer elemento de la ruta es la casilla a la que se moverá primero.
+                // y hacia el enemigo, sin ocupar la casilla final si está el enemigo
                 int movimientosRestantes = unidadIA.getRangoMovimiento();
-                Casilla siguienteCasilla = null;
+                Casilla casillaFinalDeMovimiento = null;
 
                 for(int i = 0; i < ruta.tamano(); i++) {
                     Casilla casillaRuta = ruta.obtener(i);
-                    // No podemos movernos a una casilla ocupada, a menos que sea el destino final y el enemigo se mueva.
-                    // Para simplificar la IA, la unidad solo se mueve si la casilla destino está desocupada.
-                    if (casillaRuta.estaOcupada()) {
-                        // Si la casilla está ocupada por una unidad que no es el objetivo, no podemos pasar.
-                        // Si es el objetivo, no podemos terminar el movimiento ahí.
-                        // Si está ocupada por el objetivo, la IA no se mueve, intenta atacar.
-                        // Si está ocupada por un aliado, tampoco se mueve.
-                        System.out.println("IA: Ruta bloqueada por una unidad en " + casillaRuta);
-                        break;
-                    }
 
+                    // La unidad IA no debería moverse a la casilla donde está el enemigo si ya está adyacente para atacar
+                    // O si la casilla está ocupada por un aliado.
+                    // La lógica de getRutaBFS ya debería filtrar casillas ocupadas por no-objetivos.
+                    // Aquí solo nos preocupamos por el rango de movimiento.
                     if (casillaRuta.getCosteMovimiento() <= movimientosRestantes) {
                         movimientosRestantes -= casillaRuta.getCosteMovimiento();
-                        siguienteCasilla = casillaRuta; // Esta es la última casilla válida a la que se puede mover
+                        casillaFinalDeMovimiento = casillaRuta; // Esta es la última casilla válida a la que se puede mover
                     } else {
                         break; // No hay suficiente movimiento para la siguiente casilla de la ruta
                     }
                 }
 
-                if (siguienteCasilla != null) {
-                    partida.moverUnidad(unidadIA, siguienteCasilla.getFila(), siguienteCasilla.getColumna());
+                if (casillaFinalDeMovimiento != null) {
+                    // ¡Corrección aquí! Crear un objeto Posicion
+                    partida.moverUnidad(unidadIA, casillaFinalDeMovimiento.getPosicion());
                 } else {
                     System.out.println("IA: No se pudo encontrar un movimiento válido para " + unidadIA.getNombre() + " hacia " + enemigoObjetivo.getNombre());
                 }

@@ -1,0 +1,1315 @@
+package com.example.holahola;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+
+public class HelloApplication extends Application {
+    @Override
+    public void start(Stage stage) throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("hello-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 314.0, 272.0);
+        stage.setTitle("Hello!");
+        stage.setScene(scene);
+        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
+}package com.example.holahola;
+
+import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+
+public class HelloConfiguracion {
+    @FXML
+    private Label Variante;
+    @FXML
+    private TextField nombre;
+    @FXML
+    private ToggleGroup equipo;
+
+
+
+    @FXML
+    protected void onVolverButtonClick(ActionEvent event) {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloController.class.getResource("hello-view.fxml"));
+        try{
+            Scene scene2 = new Scene(fxmlLoader.load(), 314.0, 272.0);
+            stage.setTitle("CONQUISTA");
+            stage.setScene(scene2);
+            stage.show();
+
+            Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stageActual.close();
+
+        }catch (Exception  e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    protected void onSiguienteButtonClick(ActionEvent event) {
+        String nombre2 = nombre.getText();
+        if(nombre2.equalsIgnoreCase("xxx")){
+            mostrarMensaje("Mete un nombre");
+        }else {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(Turnos.class.getResource("ConfiguracionTurnos.fxml"));
+
+            try {
+                RadioButton seleccion = (RadioButton) equipo.getSelectedToggle();
+                String equipoTxt = seleccion.getText();
+
+                Parent root = fxmlLoader.load();
+
+                // Obtener el controlador de la nueva ventana
+                Turnos controlador = fxmlLoader.getController();
+                controlador.recibirDatos(nombre2, equipoTxt);
+
+
+                Scene scene2 = new Scene(root, 349.0, 185.0);
+                stage.setTitle("NUEVA PARTIDA CONFIGURACION");
+                stage.setScene(scene2);
+                stage.show();
+
+                Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stageActual.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void mostrarMensaje(String sTexto) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerta");
+        alert.setHeaderText("Información importante");
+        alert.setContentText(sTexto);
+        alert.showAndWait();
+    }
+
+
+
+}
+package com.example.holahola;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+
+public class HelloController {
+
+    static int contadorVentanas = 0;
+
+    @FXML
+    private Label welcomeText;
+
+
+    @FXML
+    protected void onNuevoButtonClick(ActionEvent event) {
+
+
+        welcomeText.setText("¡Nueva partida se ha dicho!");
+        // Creo una nueva ventana
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloConfiguracion.class.getResource("NuevaPartida.fxml"));
+        try{
+            Scene scene2 = new Scene(fxmlLoader.load(), 350, 272.0);
+            stage.setTitle("CONQUISTA CONFIGURACION PARTIDA");
+            stage.setScene(scene2);
+            stage.show();
+            // Cierro la ventana actual
+            Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stageActual.close();
+
+
+
+        }catch (Exception  e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    protected void onGuardadaButtonClick() {
+        welcomeText.setText("Buscando la partida guardada...");
+    }
+    @FXML
+    protected void onSalirButtonClick() {
+        welcomeText.setText("¡Hasta pronto!");
+        System.exit(0);
+    }
+
+    @FXML
+    protected void onNuevaClick() {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("NewPartida.fxml"));
+        try{
+            Scene scene = new Scene(fxmlLoader.load(), 400, 400);
+            stage.setTitle("CONQUISTA");
+            stage.setScene(scene);
+            stage.show();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private ParameterDataModel parametrosData = new ParameterDataModel(3,5,"Sara");
+    private ParameterDataModelProperties modeloParaGUICompartido = new ParameterDataModelProperties(parametrosData);
+
+
+}package com.example.holahola;
+
+public class ParameterDataModel {
+    private int vida;
+    private int movimientos;
+    private String nombre;
+
+    public ParameterDataModel(int vida, int movimientos, String nombre) {
+        this.vida = vida;
+        this.movimientos = movimientos;
+        this.nombre = nombre;
+    }
+    public int getVida() {
+        return vida;
+    }
+    public void setVida(int vida) {
+        this.vida = vida;
+    }
+    public int getMovimientos() {
+        return movimientos;
+    }
+    public void setMovimientos(int movimientos) {
+        this.movimientos = movimientos;
+    }
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+}package com.example.holahola;
+
+import javafx.beans.property.*;
+
+public class ParameterDataModelProperties {
+    protected ParameterDataModel original;
+
+    private IntegerProperty vida = new SimpleIntegerProperty();
+    private IntegerProperty movimientos = new SimpleIntegerProperty();
+    private StringProperty nombre = new SimpleStringProperty();
+
+    public ParameterDataModelProperties(ParameterDataModel original) {
+        setOriginal(original);
+    }
+    public void commit(){
+        original.setMovimientos(movimientos.get());
+        original.setVida(vida.get());
+        original.setNombre(nombre.get());
+    }
+    public void rollback(){
+        movimientos.set(original.getMovimientos());
+        vida.set(original.getVida());
+        nombre.set(original.getNombre());
+    }
+
+    public ParameterDataModel getOriginal() {
+        return original;
+    }
+    public void setOriginal(ParameterDataModel original) {
+        this.original = original;
+        rollback();
+    }
+
+    public Property<Number> vidaProperty() {
+        return vida;
+    }
+    public Property<Number> movimientosProperty() {
+        return movimientos;
+    }
+    public Property<String> nombreProperty() {
+        return nombre;
+    }
+}
+package com.example.holahola;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.GridPane;
+import com.google.gson.JsonArray;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+
+public class Tablero {
+    private String nombre;
+    private String equipoTxt;
+    private int numTurnos;
+    private String tamTablero;
+    @FXML
+    private Label welcomeText;
+    @FXML
+    private GridPane tablero;
+    @FXML
+    private Label name;
+    @FXML
+    protected void onInicioButtonClick(){
+        tablero.getChildren().clear();
+        tablero.setHgap(0);
+        tablero.getColumnConstraints().clear();
+        tablero.getRowConstraints().clear();
+
+
+        String[] tamTableroArray = tamTablero.split("X");
+        int iNumFilas= Integer.parseInt(tamTableroArray[0]);
+        int iNumColumnas= Integer.parseInt(tamTableroArray[1]);
+
+
+
+        for (int row = 0; row < iNumFilas; row++) {
+            for (int col = 0; col < iNumColumnas; col++) {
+                Label placeholder = new Label(" ");
+                placeholder.setStyle("-fx-border-color: black; -fx-background-color: pink");
+                placeholder.setPrefSize(60,60);
+                tablero.add(placeholder, col, row); // Agregar al GridPane
+            }
+        }
+        name.setText(nombre);
+
+    }
+    @FXML
+    protected void onCerrarButtonClick(){
+        System.exit(0);
+    }
+    @FXML
+    protected void onGuardarButtonClick(){
+        //JsonArray jsonArray = new JSONArray();
+        JsonArray jsonArray = new JsonArray();
+        for (Node node : tablero.getChildren()) {
+            if (node instanceof Label) { // Verificar si la celda es un Label
+                int col = GridPane.getColumnIndex(node);
+                int row = GridPane.getRowIndex(node);
+                String valor = ((Label) node).getText();
+
+                // Crear un objeto JSON por celda
+                JsonObject celdaJSON = new JsonObject();
+                celdaJSON.addProperty("fila", row);
+                celdaJSON.addProperty("columna", col);
+                celdaJSON.addProperty("valor", valor);
+
+                jsonArray.add(celdaJSON);
+            }
+        }
+
+        //System.out.println(jsonArray.toString());
+        // Procedo a guardar el json en el temporal
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd_HHmm");
+        String fechaHora = LocalDateTime.now().format(formatter);
+        String filename = System.getProperty("java.io.tmpdir") + "/tablero_" + fechaHora + ".json";
+
+        // Save JSON to file
+        try (FileWriter writer = new FileWriter(filename)) {
+            new Gson().toJson(jsonArray, writer);
+            System.out.println("JSON file guardada en la ruta: " + filename);
+        } catch (IOException e) {
+            System.err.println("Error guardando el json file: " + e.getMessage());
+        }
+
+
+    }
+
+    public void recibirDatos(String nombre, String equipoTxt, int numTurnos, String tamTablero) {
+        this.nombre = nombre;
+        this.equipoTxt = equipoTxt;
+        this.numTurnos = numTurnos;
+        this.tamTablero = tamTablero;
+    }
+
+    public void mostrarMensaje(String sTexto) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerta");
+        alert.setHeaderText("Información importante");
+        alert.setContentText(sTexto);
+        alert.showAndWait();
+    }
+
+
+
+
+
+}
+package com.example.holahola;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
+import javafx.stage.Stage;
+
+
+
+public class Turnos {
+    @FXML  private TextField numeroTurnos;
+    private String tamTablero;
+    @FXML
+    private ToggleGroup sizetab;
+    private String equipoTxt;
+    private String nombre;
+
+
+    @FXML
+    protected void onVolverButtonClick(ActionEvent event) {
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloConfiguracion.class.getResource("NuevaPartida.fxml"));
+        try {
+            Scene scene2 = new Scene(fxmlLoader.load(), 314.0, 272.0);
+            stage.setTitle("CONQUISTA CONFIGURACION");
+            stage.setScene(scene2);
+            stage.show();
+
+            Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stageActual.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    protected void onSiguiente2ButtonClick(ActionEvent event) {
+        int valor;
+        try {
+            valor = Integer.parseInt(numeroTurnos.getText());
+
+            if (valor <= 5 && valor >= 25) {
+                mostrarMensaje("Valor fuera de rango (debe estar entre 5 y 25)");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            mostrarMensaje("Error: Ingresa un número válido.");
+            return;
+        }
+
+        RadioButton seleccion = (RadioButton) sizetab.getSelectedToggle();
+        tamTablero = seleccion.getText();
+
+
+        String datos = "Numero Turnos : " + valor + "\n";
+        datos = datos + "TamTablero : " + tamTablero + "\n";
+        datos = datos + "Equipo : " + equipoTxt + "\n";
+        datos = datos + "Nombre : " + nombre + "\n";
+        mostrarMensaje(datos);
+
+        Stage stage = new Stage();
+        FXMLLoader fxmlLoader = new FXMLLoader(Tablero.class.getResource("TableroPartida.fxml"));
+        try {
+            Parent root = fxmlLoader.load();
+
+            // Obtener el controlador de la nueva ventana
+            Tablero controlador = fxmlLoader.getController();
+            controlador.recibirDatos(nombre, equipoTxt, valor, tamTablero);
+
+
+            Scene scene2 = new Scene(root, 636.0, 580.0);
+            stage.setTitle("TABLERO");
+            stage.setScene(scene2);
+            stage.show();
+
+            Stage stageActual = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stageActual.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    public void mostrarMensaje(String sTexto) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Alerta");
+        alert.setHeaderText("Información importante");
+        alert.setContentText(sTexto);
+        alert.showAndWait();
+    }
+
+    public void recibirDatos(String nombre2, String equipoTxt) {
+        this.nombre = nombre2;
+        this.equipoTxt = equipoTxt;
+    }
+}package estructuras;
+
+public interface MiCola<T> {
+    void encolar(T elemento); // Añade un elemento al final de la cola
+    T desencolar(); // Elimina y devuelve el elemento del frente de la cola
+    T frente(); // Devuelve el elemento del frente sin eliminarlo
+    boolean estaVacia();
+    int tamano();
+    void limpiar();
+}package estructuras;
+
+import java.util.NoSuchElementException;
+
+public class MiColaEnlazada<T> implements MiCola<T> {
+
+    private Nodo<T> frente;
+    private Nodo<T> trasero;
+    private int tamano;
+
+    private static class Nodo<T> {
+        T dato;
+        Nodo<T> siguiente;
+
+        Nodo(T dato) {
+            this.dato = dato;
+            this.siguiente = null;
+        }
+    }
+
+    public MiColaEnlazada() {
+        this.frente = null;
+        this.trasero = null;
+        this.tamano = 0;
+    }
+
+    @Override
+    public void encolar(T elemento) {
+        Nodo<T> nuevoNodo = new Nodo<>(elemento);
+        if (estaVacia()) {
+            frente = nuevoNodo;
+        } else {
+            trasero.siguiente = nuevoNodo;
+        }
+        trasero = nuevoNodo;
+        tamano++;
+    }
+
+    @Override
+    public T desencolar() {
+        if (estaVacia()) {
+            throw new NoSuchElementException("La cola está vacía.");
+        }
+        T dato = frente.dato;
+        frente = frente.siguiente;
+        if (frente == null) { // Si la cola queda vacía, el trasero también debe ser null
+            trasero = null;
+        }
+        tamano--;
+        return dato;
+    }
+
+    @Override
+    public T frente() {
+        if (estaVacia()) {
+            throw new NoSuchElementException("La cola está vacía.");
+        }
+        return frente.dato;
+    }
+
+    @Override
+    public boolean estaVacia() {
+        return tamano == 0;
+    }
+
+    @Override
+    public int tamano() {
+        return tamano;
+    }
+
+    @Override
+    public void limpiar() {
+        frente = null;
+        trasero = null;
+        tamano = 0;
+    }
+}package estructuras;
+
+public interface MiLista<T> extends Iterable<T> {
+    void agregar(T elemento);
+    void agregar(int indice, T elemento);
+    T obtener(int indice);
+    T eliminar(int indice);
+    boolean eliminar(T elemento);
+    int tamano();
+    boolean estaVacia();
+    void limpiar();
+    boolean contiene(T elemento);
+    int indiceDe(T elemento);
+}package estructuras;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class MiListaEnlazada<T> implements MiLista<T> {
+
+    private Nodo<T> cabeza;
+    private Nodo<T> cola;
+    private int tamano;
+
+    private static class Nodo<T> {
+        T dato;
+        Nodo<T> siguiente;
+
+        Nodo(T dato) {
+            this.dato = dato;
+            this.siguiente = null;
+        }
+    }
+
+    public MiListaEnlazada() {
+        this.cabeza = null;
+        this.cola = null;
+        this.tamano = 0;
+    }
+
+    @Override
+    public void agregar(T elemento) {
+        Nodo<T> nuevoNodo = new Nodo<>(elemento);
+        if (estaVacia()) {
+            cabeza = nuevoNodo;
+            cola = nuevoNodo;
+        } else {
+            cola.siguiente = nuevoNodo;
+            cola = nuevoNodo;
+        }
+        tamano++;
+    }
+
+    @Override
+    public void agregar(int indice, T elemento) {
+        if (indice < 0 || indice > tamano) {
+            throw new IndexOutOfBoundsException("Índice fuera de límites: " + indice);
+        }
+        if (indice == tamano) {
+            agregar(elemento);
+            return;
+        }
+        Nodo<T> nuevoNodo = new Nodo<>(elemento);
+        if (indice == 0) {
+            nuevoNodo.siguiente = cabeza;
+            cabeza = nuevoNodo;
+        } else {
+            Nodo<T> actual = cabeza;
+            for (int i = 0; i < indice - 1; i++) {
+                actual = actual.siguiente;
+            }
+            nuevoNodo.siguiente = actual.siguiente;
+            actual.siguiente = nuevoNodo;
+        }
+        tamano++;
+    }
+
+    @Override
+    public T obtener(int indice) {
+        if (indice < 0 || indice >= tamano) {
+            throw new IndexOutOfBoundsException("Índice fuera de límites: " + indice);
+        }
+        Nodo<T> actual = cabeza;
+        for (int i = 0; i < indice; i++) {
+            actual = actual.siguiente;
+        }
+        return actual.dato;
+    }
+
+    @Override
+    public T eliminar(int indice) {
+        if (indice < 0 || indice >= tamano) {
+            throw new IndexOutOfBoundsException("Índice fuera de límites: " + indice);
+        }
+        T datoEliminado;
+        if (indice == 0) {
+            datoEliminado = cabeza.dato;
+            cabeza = cabeza.siguiente;
+            if (cabeza == null) { // La lista quedó vacía
+                cola = null;
+            }
+        } else {
+            Nodo<T> actual = cabeza;
+            for (int i = 0; i < indice - 1; i++) {
+                actual = actual.siguiente;
+            }
+            datoEliminado = actual.siguiente.dato;
+            actual.siguiente = actual.siguiente.siguiente;
+            if (actual.siguiente == null) { // Eliminamos la cola
+                cola = actual;
+            }
+        }
+        tamano--;
+        return datoEliminado;
+    }
+
+    @Override
+    public boolean eliminar(T elemento) {
+        if (estaVacia()) {
+            return false;
+        }
+        if (cabeza.dato.equals(elemento)) {
+            cabeza = cabeza.siguiente;
+            if (cabeza == null) {
+                cola = null;
+            }
+            tamano--;
+            return true;
+        }
+        Nodo<T> actual = cabeza;
+        while (actual.siguiente != null && !actual.siguiente.dato.equals(elemento)) {
+            actual = actual.siguiente;
+        }
+        if (actual.siguiente != null) {
+            actual.siguiente = actual.siguiente.siguiente;
+            if (actual.siguiente == null) { // Eliminamos la cola
+                cola = actual;
+            }
+            tamano--;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int tamano() {
+        return tamano;
+    }
+
+    @Override
+    public boolean estaVacia() {
+        return tamano == 0;
+    }
+
+    @Override
+    public void limpiar() {
+        cabeza = null;
+        cola = null;
+        tamano = 0;
+    }
+
+    @Override
+    public boolean contiene(T elemento) {
+        return indiceDe(elemento) != -1;
+    }
+
+    @Override
+    public int indiceDe(T elemento) {
+        Nodo<T> actual = cabeza;
+        int indice = 0;
+        while (actual != null) {
+            if (actual.dato.equals(elemento)) {
+                return indice;
+            }
+            actual = actual.siguiente;
+            indice++;
+        }
+        return -1;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new MiListaEnlazadaIterator();
+    }
+
+    private class MiListaEnlazadaIterator implements Iterator<T> {
+        private Nodo<T> actual = cabeza;
+
+        @Override
+        public boolean hasNext() {
+            return actual != null;
+        }
+
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            T data = actual.dato;
+            actual = actual.siguiente;
+            return data;
+        }
+    }
+}package juego;
+
+public class Casilla {
+    private int fila, columna;
+    private int costeMovimiento = 1;
+    private int defensaModificador = 0;
+    public Unidad unidad;
+
+    public Casilla(int fila, int columna) {
+        this.fila = fila;
+        this.columna = columna;
+    }
+
+    public boolean estaOcupada() {
+        return unidad != null;
+    }
+
+    public void colocarUnidad(Unidad unidad) {
+        this.unidad = unidad;
+    }
+
+    public void removerUnidad() {
+        this.unidad = null;
+    }
+
+    public Unidad getUnidad() {
+        return unidad;
+    }
+
+    public int getFila() {
+        return fila;
+    }
+
+    public int getColumna() {
+        return columna;
+    }
+
+    public int getCosteMovimiento() {
+        return costeMovimiento;
+    }
+
+    public void setCosteMovimiento(int costeMovimiento) {
+        this.costeMovimiento = costeMovimiento;
+    }
+
+    public int getModificadorDefensa() {
+        return defensaModificador;
+    }
+
+    public void setModificadorDefensa(int defensaModificador) {
+        this.defensaModificador = defensaModificador;
+    }
+
+}
+package juego;
+
+import estructuras.MiLista;
+import estructuras.MiListaEnlazada;
+
+import java.util.Random;
+
+public class ControladorIA {
+    private Partida partida;
+    private Jugador jugadorIA;
+    private Random random;
+
+    public ControladorIA(Partida partida, Jugador jugadorIA) {
+        this.partida = partida;
+        this.jugadorIA = jugadorIA;
+        this.random = new Random();
+    }
+
+    public void realizarTurnoIA() {
+        System.out.println("Turno de la IA: " + jugadorIA.getNombre());
+        MiLista<Unidad> unidadesIA = jugadorIA.getUnidades();
+
+        // Si la IA no tiene unidades, no puede hacer nada
+        if (unidadesIA.estaVacia()) {
+            System.out.println("La IA no tiene unidades para mover.");
+            return;
+        }
+
+        // Recorrer las unidades de la IA
+        for (Unidad unidadIA : unidadesIA) {
+            // Verificar si la unidad todavía existe (no fue eliminada por otro ataque en este mismo turno de la IA)
+            if (!partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY()).estaOcupada() ||
+                    !partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY()).getUnidadActual().equals(unidadIA)) {
+                continue; // La unidad ya no está en el tablero o fue reemplazada
+            }
+
+
+            // 1. Intentar atacar primero
+            Unidad enemigoCercano = buscarEnemigoCercanoEnRango(unidadIA);
+            if (enemigoCercano != null) {
+                partida.atacarUnidad(unidadIA, enemigoCercano);
+                System.out.println(unidadIA.getNombre() + " (IA) atacó a " + enemigoCercano.getNombre());
+                // Después de atacar, la unidad no puede moverse en este turno (regla simple)
+                continue;
+            }
+
+            // 2. Si no puede atacar, intentar moverse hacia el enemigo más cercano
+            moverHaciaEnemigoCercano(unidadIA);
+            System.out.println(unidadIA.getNombre() + " (IA) se movió o intentó moverse.");
+        }
+    }
+
+    private Unidad buscarEnemigoCercanoEnRango(Unidad unidadIA) {
+        Jugador oponente = (partida.getJugador1() == jugadorIA) ? partida.getJugador2() : partida.getJugador1();
+        MiLista<Unidad> unidadesOponente = oponente.getUnidades();
+        Unidad enemigoMasCercanoEnRango = null;
+        int distanciaMinima = Integer.MAX_VALUE;
+
+        for (Unidad enemigo : unidadesOponente) {
+            // Distancia de Manhattan (no es exactamente la del grafo, pero sirve para rango de ataque)
+            int distancia = Math.abs(unidadIA.getX() - enemigo.getX()) + Math.abs(unidadIA.getY() - enemigo.getY());
+            if (distancia <= unidadIA.getRangoAtaque() && distancia < distanciaMinima) {
+                enemigoMasCercanoEnRango = enemigo;
+                distanciaMinima = distancia;
+            }
+        }
+        return enemigoMasCercanoEnRango;
+    }
+
+    private void moverHaciaEnemigoCercano(Unidad unidadIA) {
+        Jugador oponente = (partida.getJugador1() == jugadorIA) ? partida.getJugador2() : partida.getJugador1();
+        MiLista<Unidad> unidadesOponente = oponente.getUnidades();
+
+        if (unidadesOponente.estaVacia()) {
+            return; // No hay enemigos a los que acercarse
+        }
+
+        Unidad enemigoObjetivo = null;
+        int distanciaMinima = Integer.MAX_VALUE;
+
+        // Encontrar el enemigo más cercano en términos de distancia en el tablero (no solo Manhattan)
+        for (Unidad enemigo : unidadesOponente) {
+            // Usar BFS para encontrar la ruta más corta al enemigo
+            Casilla inicio = partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY());
+            Casilla destinoEnemigo = partida.getTablero().getCasilla(enemigo.getX(), enemigo.getY());
+            MiLista<Casilla> ruta = partida.getTablero().getRutaBFS(inicio, destinoEnemigo, unidadIA);
+
+            if (ruta != null && ruta.tamano() < distanciaMinima) {
+                distanciaMinima = ruta.tamano();
+                enemigoObjetivo = enemigo;
+            }
+        }
+
+        if (enemigoObjetivo != null) {
+            Casilla inicio = partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY());
+            Casilla destinoEnemigo = partida.getTablero().getCasilla(enemigoObjetivo.getX(), enemigoObjetivo.getY());
+            MiLista<Casilla> ruta = partida.getTablero().getRutaBFS(inicio, destinoEnemigo, unidadIA);
+
+            if (ruta != null && !ruta.estaVacia()) {
+                // Mover la unidad el máximo de casillas posible dentro de su rango de movimiento
+                // y hacia el enemigo.
+                // La ruta incluye el destino. El primer elemento de la ruta es la casilla a la que se moverá primero.
+                int movimientosRestantes = unidadIA.getRangoMovimiento();
+                Casilla siguienteCasilla = null;
+
+                for(int i = 0; i < ruta.tamano(); i++) {
+                    Casilla casillaRuta = ruta.obtener(i);
+                    // No podemos movernos a una casilla ocupada, a menos que sea el destino final y el enemigo se mueva.
+                    // Para simplificar la IA, la unidad solo se mueve si la casilla destino está desocupada.
+                    if (casillaRuta.estaOcupada()) {
+                        // Si la casilla está ocupada por una unidad que no es el objetivo, no podemos pasar.
+                        // Si es el objetivo, no podemos terminar el movimiento ahí.
+                        // Si está ocupada por el objetivo, la IA no se mueve, intenta atacar.
+                        // Si está ocupada por un aliado, tampoco se mueve.
+                        System.out.println("IA: Ruta bloqueada por una unidad en " + casillaRuta);
+                        break;
+                    }
+
+                    if (casillaRuta.getCosteMovimiento() <= movimientosRestantes) {
+                        movimientosRestantes -= casillaRuta.getCosteMovimiento();
+                        siguienteCasilla = casillaRuta; // Esta es la última casilla válida a la que se puede mover
+                    } else {
+                        break; // No hay suficiente movimiento para la siguiente casilla de la ruta
+                    }
+                }
+
+                if (siguienteCasilla != null) {
+                    partida.moverUnidad(unidadIA, siguienteCasilla.getFila(), siguienteCasilla.getColumna());
+                } else {
+                    System.out.println("IA: No se pudo encontrar un movimiento válido para " + unidadIA.getNombre() + " hacia " + enemigoObjetivo.getNombre());
+                }
+            } else {
+                System.out.println("IA: No se encontró una ruta válida para " + unidadIA.getNombre() + " hacia " + enemigoObjetivo.getNombre());
+            }
+        }
+    }
+}package juego;
+
+import com.google.gson.*;
+import java.io.*;
+
+public class GestorArchivos {
+
+    public static void guardarPartida(Partida partida, String rutaArchivo) {
+        try {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(rutaArchivo);
+            gson.toJson(partida, writer);
+            writer.close();
+            System.out.println("Partida guardada en " + rutaArchivo);
+        } catch (IOException e) {
+            System.out.println("Error al guardar la partida: " + e.getMessage());
+        }
+    }
+
+    public static Partida cargarPartida(String rutaArchivo) {
+        try {
+            Gson gson = new Gson();
+            FileReader reader = new FileReader(rutaArchivo);
+            Partida partida = gson.fromJson(reader, Partida.class);
+            reader.close();
+            System.out.println("Partida cargada desde " + rutaArchivo);
+            return partida;
+        } catch (IOException e) {
+            System.out.println("Error al cargar la partida: " + e.getMessage());
+            return null;
+        }
+    }
+}
+package juego;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class GestorTurnos {
+    private Queue<Jugador> colaTurnos;
+
+    public GestorTurnos(Jugador jugador1, Jugador jugador2) {
+        colaTurnos = new LinkedList<>();
+        colaTurnos.add(jugador1);
+        colaTurnos.add(jugador2);
+    }
+
+    public Jugador obtenerJugadorActual() {
+        return colaTurnos.peek();
+    }
+
+    public void pasarTurno() {
+        Jugador actual = colaTurnos.poll();
+        colaTurnos.add(actual);
+    }
+}
+package juego;
+public class Ingeniero extends Unidad {
+    public Ingeniero() {
+        // HP, Ataque, Defensa, RangoMovimiento, RangoAtaque
+        super(120, 15, 10, 3, 1);
+    }
+
+    @Override
+    public String getNombre() {
+        return "Ingeniero";
+    }
+}
+package juego;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Jugador {
+    private String nombre;
+    private List<Unidad> unidades;
+
+    public Jugador(String nombre) {
+        this.nombre = nombre;
+        this.unidades = new ArrayList<>();
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public List<Unidad> getUnidades() {
+        return unidades;
+    }
+
+    public void agregarUnidad(Unidad unidad) {
+        unidades.add(unidad);
+    }
+
+    public void removerUnidad(Unidad unidad) {
+        unidades.remove(unidad);
+    }
+}
+package juego;
+
+import estructuras.MiListaEnlazada;
+import estructuras.MiLista;
+import com.google.gson.annotations.Expose;
+
+import java.io.Serializable;
+import java.time.LocalDateTime; // Necesitarás Java 8+ para esto
+import java.time.format.DateTimeFormatter;
+
+
+public class LoggerPartida implements Serializable {
+    @Expose private MiLista<NodoLog> logEntries; // Cambiado a MiLista
+
+    public LoggerPartida() {
+        this.logEntries = new MiListaEnlazada<>(); // Usando MiListaEnlazada
+    }
+
+    public void registrarAccion(Object entidad, String descripcion, int turnoGlobal) {
+        String idEntidad = (entidad instanceof Unidad) ? ((Unidad) entidad).getNombre() : "Juego/Sistema";
+        String marcaTiempo = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String mensaje = marcaTiempo + " [Turno " + turnoGlobal + "] " + idEntidad + ": " + descripcion;
+        logEntries.agregar(new NodoLog(mensaje));
+    }
+
+    public MiLista<NodoLog> getLogEntries() {
+        return logEntries;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("--- LOG DE PARTIDA ---\n");
+        for (NodoLog entry : logEntries) {
+            sb.append(entry.getMensaje()).append("\n");
+        }
+        sb.append("----------------------");
+        return sb.toString();
+    }
+}package juego;
+
+public class Main {
+    public static void main(String[] args) {
+        Partida partida = new Partida(10, 10, "Jugador 1", "Jugador 2");
+
+        System.out.println("Empieza el juego:");
+        System.out.println("Turno de: " + partida.getJugadorActual().getNombre());
+
+        partida.siguienteTurno();
+        System.out.println("Ahora es turno de: " + partida.getJugadorActual().getNombre());
+    }
+}
+
+package juego;
+
+import java.io.Serializable;
+import com.google.gson.annotations.Expose;
+
+public class NodoLog implements Serializable {
+    @Expose private String mensaje;
+
+    public NodoLog(String mensaje) {
+        this.mensaje = mensaje;
+    }
+
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    // Si quieres un grafo real, aquí necesitarías una lista de nodos a los que apunta
+    // private MiLista<NodoLog> siguientes;
+}package juego;
+
+public class Partida {
+    private Tablero tablero;
+    private Jugador jugador1, jugador2;
+    private boolean turnoJugador1 = true;
+
+    public Partida(int filas, int columnas, String nombre1, String nombre2) {
+        this.tablero = new Tablero(filas, columnas);
+        this.jugador1 = new Jugador(nombre1);
+        this.jugador2 = new Jugador(nombre2);
+        inicializarUnidades();
+    }
+
+    private void inicializarUnidades() {
+        Unidad unidad1 = new Ingeniero();
+        Unidad unidad2 = new Poeta();
+
+
+        unidad1.setPosicion(0, 0);
+        unidad2.setPosicion(tablero.getFilas() - 1, tablero.getColumnas() - 1);
+
+        tablero.getCasilla(0, 0).colocarUnidad(unidad1);
+        tablero.getCasilla(9, 9).colocarUnidad(unidad2);
+
+        jugador1.agregarUnidad(unidad1);
+        jugador2.agregarUnidad(unidad2);
+    }
+
+    public void siguienteTurno() {
+        turnoJugador1 = !turnoJugador1;
+    }
+
+    public Jugador getJugadorActual() {
+        return turnoJugador1 ? jugador1 : jugador2;
+    }
+
+    public Jugador getJugadorOponente() {
+        return turnoJugador1 ? jugador2 : jugador1;
+    }
+
+    public boolean estaTerminada() {
+        return jugador1.getUnidades().isEmpty() || jugador2.getUnidades().isEmpty();
+    }
+
+    public String getGanador() {
+        if (jugador1.getUnidades().isEmpty()) return jugador2.getNombre();
+        if (jugador2.getUnidades().isEmpty()) return jugador1.getNombre();
+        return null;
+    }
+
+    public Tablero getTablero() {
+        return tablero;
+    }
+}
+package juego;
+public class Poeta extends Unidad {
+    public Poeta() {
+        // HP, Ataque, Defensa, RangoMovimiento, RangoAtaque
+        super(100, 12, 6, 4, 2);
+    }
+
+    @Override
+    public String getNombre() {
+        return "Poeta";
+    }
+}
+package juego;
+
+import java.util.Objects;
+
+public class Posicion {
+    private int x;
+    private int y;
+
+    public Posicion(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public int distanciaA(Posicion otra) {
+        return Math.abs(this.x - otra.x) + Math.abs(this.y - otra.y); // Distancia Manhattan
+    }
+
+    // Getters
+    public int getX() { return x; }
+    public int getY() { return y; }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Posicion posicion = (Posicion) obj;
+        return x == posicion.x && y == posicion.y;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
+    }
+}
+package juego;
+
+public class Tablero {
+    private int filas;
+    private int columnas;
+    private Casilla[][] casillas;
+
+    public int getFilas() {
+        return filas;
+    }
+
+    public int getColumnas() {
+        return columnas;
+    }
+
+    public Tablero(int filas, int columnas) {
+        this.filas = filas;
+        this.columnas = columnas;
+        this.casillas = new Casilla[filas][columnas];
+        inicializarCasillas();
+    }
+
+    private void inicializarCasillas() {
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+                casillas[i][j] = new Casilla(i, j);
+            }
+        }
+    }
+    public boolean estaDentroDeLimites(int fila, int columna) {
+        return fila >= 0 && fila < filas && columna >= 0 && columna < columnas;
+    }
+    public Casilla getCasilla(int fila, int columna) {
+        if (fila >= 0 && fila < filas && columna >= 0 && columna < columnas) {
+            return casillas[fila][columna];
+        }
+        return null;
+    }
+}
+package juego;
+public abstract class Unidad {
+    protected int hp;
+    protected int ataque;
+    protected int defensa;
+    protected int rangoMovimiento;
+    protected int rangoAtaque;
+    protected int x;
+    protected int y;
+
+    public Unidad(int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque) {
+        this.hp = hp;
+        this.ataque = ataque;
+        this.defensa = defensa;
+        this.rangoMovimiento = rangoMovimiento;
+        this.rangoAtaque = rangoAtaque;
+    }
+
+    // Métodos getter y setter...
+    public void setPosicion(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public abstract String getNombre();
+
+    public int getHp() { return hp; }
+    public void setHp(int hp) { this.hp = hp; }
+
+    public int getAtaque() { return ataque; }
+    public void setAtaque(int ataque) { this.ataque = ataque; }
+
+    public int getDefensa() { return defensa; }
+    public void setDefensa(int defensa) { this.defensa = defensa; }
+
+    public int getRangoMovimiento() { return rangoMovimiento; }
+    public void setRangoMovimiento(int rangoMovimiento) { this.rangoMovimiento = rangoMovimiento; }
+
+    public int getRangoAtaque() { return rangoAtaque; }
+    public void setRangoAtaque(int rangoAtaque) { this.rangoAtaque = rangoAtaque; }
+
+    public int getX() { return x; }
+    public void setX(int x) { this.x = x; }
+
+    public int getY() { return y; }
+    public void setY(int y) { this.y = y; }
+
+
+}

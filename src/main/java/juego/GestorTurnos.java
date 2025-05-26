@@ -1,23 +1,24 @@
 package juego;
+import com.google.gson.annotations.Expose;
+import estructuras.*;
 
-import java.util.LinkedList;
-import java.util.Queue;
 
 public class GestorTurnos {
-    private Queue<Jugador> colaTurnos;
+   @Expose
+   private MiCola<Jugador> colaTurnos;
 
     public GestorTurnos(Jugador jugador1, Jugador jugador2) {
-        colaTurnos = new LinkedList<>();
-        colaTurnos.add(jugador1);
-        colaTurnos.add(jugador2);
+        this.colaTurnos = new MiColaEnlazada<>();
+        colaTurnos.encolar(jugador1);
+        colaTurnos.encolar(jugador2);
     }
 
     public Jugador obtenerJugadorActual() {
-        return colaTurnos.peek();
+        return colaTurnos.frente();
     }
 
     public void pasarTurno() {
-        Jugador actual = colaTurnos.poll();
-        colaTurnos.add(actual);
+        Jugador actual = colaTurnos.desencolar();
+        colaTurnos.encolar(actual);
     }
 }

@@ -1,30 +1,31 @@
 package juego;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.annotations.Expose;
+import estructuras.*;
+
 
 public class Jugador {
-    private String nombre;
-    private List<Unidad> unidades;
+    @Expose private String nombre;
+    @Expose private MiLista<Unidad> unidades;
 
     public Jugador(String nombre) {
         this.nombre = nombre;
-        this.unidades = new ArrayList<>();
+        this.unidades = new MiListaEnlazada<>();
     }
 
     public String getNombre() {
         return nombre;
     }
 
-    public List<Unidad> getUnidades() {
+    public MiLista<Unidad> getUnidades() {
         return unidades;
     }
 
     public void agregarUnidad(Unidad unidad) {
-        unidades.add(unidad);
+        unidades.agregar(unidad);
     }
 
-    public void removerUnidad(Unidad unidad) {
-        unidades.remove(unidad);
+    public void eliminarUnidad(Unidad unidad) {
+        unidades.eliminar(unidad);
     }
 }
