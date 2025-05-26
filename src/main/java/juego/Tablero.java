@@ -33,7 +33,11 @@ public class Tablero implements Serializable {
         this.casillas = new Casilla[filas][columnas];
         inicializarCasillas();
     }
-
+    public boolean esCasillaValida(int x, int y) {
+        return x >= 0 && x < filas &&
+                y >= 0 && y < columnas &&
+                casillas[x][y] == null; // null = casilla vacía
+    }
     private void inicializarCasillas() {
         for (int i = 0; i < filas; i++) {
             for (int j = 0; j < columnas; j++) {
