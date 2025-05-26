@@ -1,4 +1,9 @@
 package juego;
+
+import juego.AtaqueInvalidoException;
+import juego.MovimientoInvalidoException;
+import juego.Tablero;
+
 public abstract class Unidad {
     protected int hp;
     protected int ataque;
@@ -7,6 +12,7 @@ public abstract class Unidad {
     protected int rangoAtaque;
     protected int x;
     protected int y;
+    protected String nombre;
 
     public Unidad(int hp, int ataque, int defensa, int rangoMovimiento, int rangoAtaque) {
         this.hp = hp;
@@ -16,13 +22,39 @@ public abstract class Unidad {
         this.rangoAtaque = rangoAtaque;
     }
 
-    // Métodos getter y setter...
+    // Métodos
+    public boolean moverA(int nuevaX, int nuevaY, Tablero tablero) throws MovimientoInvalidoException {
+        int distancia = Math.abs(nuevaX - x) + Math.abs(nuevaY - y);
+        if (distancia > rangoMovimiento || !tablero.esCasillaValida(nuevaX, nuevaY)) {
+            throw new MovimientoInvalidoException("Movimiento inválido.");
+        }
+
+        this.x = nuevaX;
+        this.y = nuevaY;
+        return true;
+    }
+    public String obtenerInformacion() {
+        return nombre + " HP: " + hp + " Atk: " + ataque + " Def: " + defensa;
+    }
+    public void atacar(Unidad objetivo) throws AtaqueInvalidoException {
+        int distancia = Math.abs(objetivo.x - x) + Math.abs(objetivo.y - y);
+        if (distancia > rangoAtaque || this.getPersonaje().equals(objetivo.getPersonaje())) {
+            throw new AtaqueInvalidoException("Ataque inválido.");
+        }
+
+        int factor = (int)(Math.random() * 3); // 0, 1 o 2
+        int dano = factor * this.ataque - objetivo.defensa;
+        if (dano > 0) {
+            objetivo.hp -= dano;
+        }
+    }
+
     public void setPosicion(int x, int y) {
         this.x = x;
         this.y = y;
     }
 
-    public abstract String getNombre();
+    public abstract String getPersonaje();
 
     public int getHp() { return hp; }
     public void setHp(int hp) { this.hp = hp; }

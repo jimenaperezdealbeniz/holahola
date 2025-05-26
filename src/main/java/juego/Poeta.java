@@ -6,7 +6,7 @@ public class Poeta extends Unidad {
     }
 
     @Override
-    public String getNombre() {
+    public String getPersonaje() {
         return "Poeta";
     }
 }

@@ -6,7 +6,7 @@ public class Ingeniero extends Unidad {
     }
 
     @Override
-    public String getNombre() {
+    public String getPersonaje() {
         return "Ingeniero";
     }
 }
