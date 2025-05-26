@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="185.0" prefWidth="349.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.holahola.Turnos">
+    <children>
+        <Label alignment="CENTER" prefHeight="66.0" prefWidth="347.0" text="CONFIGURACION PARTIDA">
+            <font>
+                <Font name="Bodoni MT" size="19.0" />
+            </font>
+        </Label>
+        <HBox alignment="CENTER" prefHeight="35.0" prefWidth="248.0" spacing="10.0">
+            <children>
+                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="23.0" prefWidth="129.0" text="TAMAÑO DE TABLERO:" textAlignment="CENTER" />
+                <RadioButton mnemonicParsing="false" selected="true" text="10X10">
+                    <toggleGroup>
+                        <ToggleGroup fx:id="sizetab" />
+                    </toggleGroup>
+                </RadioButton>
+                <RadioButton mnemonicParsing="false" text="15X8" toggleGroup="$sizetab" />
+                <RadioButton mnemonicParsing="false" text="20X20" toggleGroup="$sizetab" />
+            </children>
+        </HBox>
+        <HBox alignment="CENTER" prefHeight="36.0" prefWidth="347.0" spacing="10.0">
+            <children>
+                <Label alignment="CENTER_RIGHT" prefHeight="32.0" prefWidth="191.0" text="Turnos para nuevas unidades:" />
+                <TextField fx:id="numeroTurnos" alignment="CENTER" prefHeight="25.0" prefWidth="117.0" text="5" />
+            </children></HBox>
+        <HBox alignment="CENTER" prefHeight="37.0" prefWidth="349.0" spacing="200.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#onVolverButtonClick" text="Volver" textFill="#b31111" />
+                <Button mnemonicParsing="false" onAction="#onSiguiente2ButtonClick" text="Siguiente" textFill="#1d8d04" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
+

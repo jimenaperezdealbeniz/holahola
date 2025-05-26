@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="272.0" prefWidth="314.0" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.holahola.HelloConfiguracion">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <Label prefHeight="25.0" prefWidth="332.0" text="Nueva Partida" textFill="#2f2e2a">
+        <font>
+            <Font name="Bodoni MT" size="18.0" />
+        </font></Label>
+    <HBox prefHeight="100.0" prefWidth="200.0">
+        <children>
+            <Label prefHeight="17.0" prefWidth="121.0" text="      JUGADOR 1">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font></Label>
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="149.0" text="JUGADOR 2" textAlignment="RIGHT">
+                <font>
+                    <Font name="System Bold" size="12.0" />
+                </font></Label>
+        </children>
+    </HBox>
+    <HBox alignment="CENTER_LEFT" prefHeight="25.0" prefWidth="184.0">
+        <children>
+
+
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="56.0" text="Nombre:" textAlignment="CENTER" />
+            <TextField fx:id="nombre" alignment="TOP_LEFT" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="66.0" text="xxx">
+                <opaqueInsets>
+                    <Insets />
+                </opaqueInsets>
+            </TextField>
+            <Label alignment="CENTER" prefHeight="17.0" prefWidth="53.0" text="VS" />
+            <Label alignment="CENTER_RIGHT" prefHeight="17.0" prefWidth="73.0" text="IA" />
+        </children></HBox>
+    <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+        <children>
+            <Label fx:id="Variante" lineSpacing="100.0" prefHeight="17.0" prefWidth="108.0" text="ELIGE BANDO:" />
+            <RadioButton minWidth="-Infinity" mnemonicParsing="false" prefHeight="16.0" prefWidth="79.0" selected="true" text="CIENCIAS">
+                <toggleGroup>
+                    <ToggleGroup fx:id="equipo" />
+                </toggleGroup>
+            </RadioButton>
+            <RadioButton mnemonicParsing="false" prefHeight="17.0" prefWidth="71.0" text="LETRAS" toggleGroup="$equipo" />
+        </children>
+    </HBox>
+    <HBox prefHeight="100.0" prefWidth="200.0" spacing="135.0">
+        <children>
+            <Button mnemonicParsing="false" onAction="#onVolverButtonClick" prefHeight="25.0" prefWidth="72.0" text="Volver" textAlignment="RIGHT" textFill="#e41313" />
+            <Button mnemonicParsing="false" onAction="#onSiguienteButtonClick" text="Siguiente" textFill="#348203" />
+        </children>
+    </HBox>
+</VBox>

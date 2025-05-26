@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="com.example.holahola.HelloController">
+<VBox alignment="CENTER" prefHeight="272.0" prefWidth="314.0" spacing="20.0" xmlns="http://javafx.com/javafx/11.0.14-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.holahola.HelloController">
     <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
+    <Label prefHeight="78.0" prefWidth="285.0" text="CONQUISTA" textFill="#2f2e2a">
+        <font>
+            <Font name="Bodoni MT" size="46.0" />
+        </font></Label>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
+    <Label fx:id="welcomeText" alignment="CENTER" contentDisplay="CENTER" prefHeight="11.0" prefWidth="273.0" text="Elija una opción" textAlignment="CENTER" wrapText="true">
+        <font>
+            <Font name="Bodoni MT" size="14.0" />
+        </font></Label>
+    <Button mnemonicParsing="false" onAction="#onNuevoButtonClick" text="Nueva Partida" textFill="#328206" />
+    <Button mnemonicParsing="false" onAction="#onGuardadaButtonClick" text="Partida Guardada" textFill="#c51fdb" />
+    <Button mnemonicParsing="false" onAction="#onSalirButtonClick" text="Salir" textFill="#e41313" />
 </VBox>
