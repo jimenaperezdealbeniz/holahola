@@ -1,94 +1,136 @@
 package juego;
 
-import java.util.List;
+import estructuras.MiLista;
+import estructuras.MiListaEnlazada;
+
 import java.util.Random;
 
 public class ControladorIA {
-    private Tablero tablero;
-    private LoggerPartida logger;
-    private Random random = new Random();
+    private Partida partida;
+    private Jugador jugadorIA;
+    private Random random;
 
-    public ControladorIA(Tablero tablero, LoggerPartida logger) {
-        this.tablero = tablero;
-        this.logger = logger;
+    public ControladorIA(Partida partida, Jugador jugadorIA) {
+        this.partida = partida;
+        this.jugadorIA = jugadorIA;
+        this.random = new Random();
     }
 
-    public void jugarTurnoIA(Jugador jugadorIA, List<Jugador> jugadoresEnemigos) {
-        for (Unidad unidad : jugadorIA.getUnidades()) {
-            moverUnidadAleatoriamente(unidad);
-            atacarSiPuede(unidad, jugadoresEnemigos);
+    public void realizarTurnoIA() {
+        System.out.println("Turno de la IA: " + jugadorIA.getNombre());
+        MiLista<Unidad> unidadesIA = jugadorIA.getUnidades();
+
+        // Si la IA no tiene unidades, no puede hacer nada
+        if (unidadesIA.estaVacia()) {
+            System.out.println("La IA no tiene unidades para mover.");
+            return;
+        }
+
+        // Recorrer las unidades de la IA
+        for (Unidad unidadIA : unidadesIA) {
+            // Verificar si la unidad todavía existe (no fue eliminada por otro ataque en este mismo turno de la IA)
+            if (!partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY()).estaOcupada() ||
+                    !partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY()).getUnidadActual().equals(unidadIA)) {
+                continue; // La unidad ya no está en el tablero o fue reemplazada
+            }
+
+
+            // 1. Intentar atacar primero
+            Unidad enemigoCercano = buscarEnemigoCercanoEnRango(unidadIA);
+            if (enemigoCercano != null) {
+                partida.atacarUnidad(unidadIA, enemigoCercano);
+                System.out.println(unidadIA.getNombre() + " (IA) atacó a " + enemigoCercano.getNombre());
+                // Después de atacar, la unidad no puede moverse en este turno (regla simple)
+                continue;
+            }
+
+            // 2. Si no puede atacar, intentar moverse hacia el enemigo más cercano
+            moverHaciaEnemigoCercano(unidadIA);
+            System.out.println(unidadIA.getNombre() + " (IA) se movió o intentó moverse.");
         }
     }
 
-    private void moverUnidadAleatoriamente(Unidad unidad) {
-        int rango = unidad.getRangoMovimiento();
-        int origenX = unidad.getX();
-        int origenY = unidad.getY();
+    private Unidad buscarEnemigoCercanoEnRango(Unidad unidadIA) {
+        Jugador oponente = (partida.getJugador1() == jugadorIA) ? partida.getJugador2() : partida.getJugador1();
+        MiLista<Unidad> unidadesOponente = oponente.getUnidades();
+        Unidad enemigoMasCercanoEnRango = null;
+        int distanciaMinima = Integer.MAX_VALUE;
 
-        for (int intentos = 0; intentos < 10; intentos++) {
-            int dx = random.nextInt(2 * rango + 1) - rango;
-            int dy = random.nextInt(2 * rango + 1) - rango;
-            int destinoX = origenX + dx;
-            int destinoY = origenY + dy;
-
-            if (tablero.estaDentroDeLimites(destinoX, destinoY)) {
-                Casilla destino = tablero.getCasilla(destinoX, destinoY);
-                if (!destino.estaOcupada()) {
-                    tablero.getCasilla(origenX, origenY).removerUnidad();
-                    destino.colocarUnidad(unidad);
-                    unidad.setPosicion(destinoX, destinoY);
-
-                    logger.log(unidad.getNombre() + " se mueve a (" + destinoX + "," + destinoY + ")");
-                    break;
-                }
+        for (Unidad enemigo : unidadesOponente) {
+            // Distancia de Manhattan (no es exactamente la del grafo, pero sirve para rango de ataque)
+            int distancia = Math.abs(unidadIA.getX() - enemigo.getX()) + Math.abs(unidadIA.getY() - enemigo.getY());
+            if (distancia <= unidadIA.getRangoAtaque() && distancia < distanciaMinima) {
+                enemigoMasCercanoEnRango = enemigo;
+                distanciaMinima = distancia;
             }
         }
+        return enemigoMasCercanoEnRango;
     }
 
-    private void atacarSiPuede(Unidad unidad, List<Jugador> jugadoresEnemigos) {
-        int x = unidad.getX();
-        int y = unidad.getY();
-        int rango = unidad.getRangoAtaque();
+    private void moverHaciaEnemigoCercano(Unidad unidadIA) {
+        Jugador oponente = (partida.getJugador1() == jugadorIA) ? partida.getJugador2() : partida.getJugador1();
+        MiLista<Unidad> unidadesOponente = oponente.getUnidades();
 
-        for (int i = x - rango; i <= x + rango; i++) {
-            for (int j = y - rango; j <= y + rango; j++) {
-                if (tablero.estaDentroDeLimites(i, j)) {
-                    Casilla casilla = tablero.getCasilla(i, j);
-                    if (casilla.estaOcupada()) {
-                        Unidad objetivo = casilla.getUnidad();
+        if (unidadesOponente.estaVacia()) {
+            return; // No hay enemigos a los que acercarse
+        }
 
-                        if (esUnidadDeEnemigo(objetivo, jugadoresEnemigos)) {
-                            int danio = Math.max(0, unidad.getAtaque() - objetivo.getDefensa());
-                            objetivo.setHp(objetivo.getHp() - danio);
+        Unidad enemigoObjetivo = null;
+        int distanciaMinima = Integer.MAX_VALUE;
 
-                            logger.log(unidad.getNombre() + " ataca a " + objetivo.getNombre() + " causando " + danio + " de daño");
+        // Encontrar el enemigo más cercano en términos de distancia en el tablero (no solo Manhattan)
+        for (Unidad enemigo : unidadesOponente) {
+            // Usar BFS para encontrar la ruta más corta al enemigo
+            Casilla inicio = partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY());
+            Casilla destinoEnemigo = partida.getTablero().getCasilla(enemigo.getX(), enemigo.getY());
+            MiLista<Casilla> ruta = partida.getTablero().getRutaBFS(inicio, destinoEnemigo, unidadIA);
 
-                            if (objetivo.getHp() <= 0) {
-                                casilla.removerUnidad();
-                                eliminarUnidadDeJugador(objetivo, jugadoresEnemigos);
-                                logger.log(objetivo.getNombre() + " ha muerto.");
-                            }
-                            return; // Solo un ataque por turno
-                        }
+            if (ruta != null && ruta.tamano() < distanciaMinima) {
+                distanciaMinima = ruta.tamano();
+                enemigoObjetivo = enemigo;
+            }
+        }
+
+        if (enemigoObjetivo != null) {
+            Casilla inicio = partida.getTablero().getCasilla(unidadIA.getX(), unidadIA.getY());
+            Casilla destinoEnemigo = partida.getTablero().getCasilla(enemigoObjetivo.getX(), enemigoObjetivo.getY());
+            MiLista<Casilla> ruta = partida.getTablero().getRutaBFS(inicio, destinoEnemigo, unidadIA);
+
+            if (ruta != null && !ruta.estaVacia()) {
+                // Mover la unidad el máximo de casillas posible dentro de su rango de movimiento
+                // y hacia el enemigo.
+                // La ruta incluye el destino. El primer elemento de la ruta es la casilla a la que se moverá primero.
+                int movimientosRestantes = unidadIA.getRangoMovimiento();
+                Casilla siguienteCasilla = null;
+
+                for(int i = 0; i < ruta.tamano(); i++) {
+                    Casilla casillaRuta = ruta.obtener(i);
+                    // No podemos movernos a una casilla ocupada, a menos que sea el destino final y el enemigo se mueva.
+                    // Para simplificar la IA, la unidad solo se mueve si la casilla destino está desocupada.
+                    if (casillaRuta.estaOcupada()) {
+                        // Si la casilla está ocupada por una unidad que no es el objetivo, no podemos pasar.
+                        // Si es el objetivo, no podemos terminar el movimiento ahí.
+                        // Si está ocupada por el objetivo, la IA no se mueve, intenta atacar.
+                        // Si está ocupada por un aliado, tampoco se mueve.
+                        System.out.println("IA: Ruta bloqueada por una unidad en " + casillaRuta);
+                        break;
+                    }
+
+                    if (casillaRuta.getCosteMovimiento() <= movimientosRestantes) {
+                        movimientosRestantes -= casillaRuta.getCosteMovimiento();
+                        siguienteCasilla = casillaRuta; // Esta es la última casilla válida a la que se puede mover
+                    } else {
+                        break; // No hay suficiente movimiento para la siguiente casilla de la ruta
                     }
                 }
-            }
-        }
-    }
 
-    private boolean esUnidadDeEnemigo(Unidad unidad, List<Jugador> jugadoresEnemigos) {
-        for (Jugador enemigo : jugadoresEnemigos) {
-            if (enemigo.getUnidades().contains(unidad)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void eliminarUnidadDeJugador(Unidad unidad, List<Jugador> jugadoresEnemigos) {
-        for (Jugador enemigo : jugadoresEnemigos) {
-            if (enemigo.getUnidades().remove(unidad)) {
-                break;
+                if (siguienteCasilla != null) {
+                    partida.moverUnidad(unidadIA, siguienteCasilla.getFila(), siguienteCasilla.getColumna());
+                } else {
+                    System.out.println("IA: No se pudo encontrar un movimiento válido para " + unidadIA.getNombre() + " hacia " + enemigoObjetivo.getNombre());
+                }
+            } else {
+                System.out.println("IA: No se encontró una ruta válida para " + unidadIA.getNombre() + " hacia " + enemigoObjetivo.getNombre());
             }
         }
     }

@@ -1,26 +1,19 @@
 package juego;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import com.google.gson.annotations.Expose;
 
-public class NodoLog {
-    private String accion;
-    private List<NodoLog> siguientes; // acciones que siguen a esta
+public class NodoLog implements Serializable {
+    @Expose private String mensaje;
 
-    public NodoLog(String accion) {
-        this.accion = accion;
-        this.siguientes = new ArrayList<>();
+    public NodoLog(String mensaje) {
+        this.mensaje = mensaje;
     }
 
-    public String getAccion() {
-        return accion;
+    public String getMensaje() {
+        return mensaje;
     }
 
-    public List<NodoLog> getSiguientes() {
-        return siguientes;
-    }
-
-    public void agregarSiguiente(NodoLog nodo) {
-        siguientes.add(nodo);
-    }
+    // Si quieres un grafo real, aquí necesitarías una lista de nodos a los que apunta
+    // private MiLista<NodoLog> siguientes;
 }

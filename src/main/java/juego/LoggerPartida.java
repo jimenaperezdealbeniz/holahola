@@ -1,37 +1,39 @@
 package juego;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.LocalDateTime;
+import estructuras.MiListaEnlazada;
+import estructuras.MiLista;
+import com.google.gson.annotations.Expose;
 
-public class LoggerPartida {
-    private BufferedWriter writer;
+import java.io.Serializable;
+import java.time.LocalDateTime; // Necesitarás Java 8+ para esto
+import java.time.format.DateTimeFormatter;
 
-    public LoggerPartida(String nombreArchivo) {
-        try {
-            writer = new BufferedWriter(new FileWriter(nombreArchivo, true)); // true = append mode
-        } catch (IOException e) {
-            System.err.println("Error al iniciar el logger: " + e.getMessage());
-        }
+
+public class LoggerPartida implements Serializable {
+    @Expose private MiLista<NodoLog> logEntries; // Cambiado a MiLista
+
+    public LoggerPartida() {
+        this.logEntries = new MiListaEnlazada<>(); // Usando MiListaEnlazada
     }
 
-    public void log(String mensaje) {
-        try {
-            String tiempo = LocalDateTime.now().toString();
-            writer.write("[" + tiempo + "] " + mensaje);
-            writer.newLine();
-            writer.flush();
-        } catch (IOException e) {
-            System.err.println("Error al escribir en el log: " + e.getMessage());
-        }
+    public void registrarAccion(Object entidad, String descripcion, int turnoGlobal) {
+        String idEntidad = (entidad instanceof Unidad) ? ((Unidad) entidad).getNombre() : "Juego/Sistema";
+        String marcaTiempo = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String mensaje = marcaTiempo + " [Turno " + turnoGlobal + "] " + idEntidad + ": " + descripcion;
+        logEntries.agregar(new NodoLog(mensaje));
     }
 
-    public void cerrar() {
-        try {
-            if (writer != null) writer.close();
-        } catch (IOException e) {
-            System.err.println("Error al cerrar el logger: " + e.getMessage());
+    public MiLista<NodoLog> getLogEntries() {
+        return logEntries;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("--- LOG DE PARTIDA ---\n");
+        for (NodoLog entry : logEntries) {
+            sb.append(entry.getMensaje()).append("\n");
         }
+        sb.append("----------------------");
+        return sb.toString();
     }
 }
