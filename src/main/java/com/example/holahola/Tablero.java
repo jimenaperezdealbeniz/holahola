@@ -23,17 +23,23 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import juego.*;
+import javafx.scene.control.TextArea;
 
 
 public class Tablero {
     private String nombre;
     private String equipoTxt;
     private int numTurnos;
+    private Partida partida;
+    @FXML private Label HP, Atack, Defend, RangeMovement, RangeAtack;
     private String tamTablero;
     @FXML
     private Label welcomeText;
     @FXML
     private GridPane tablero;
+    @FXML
+    private TextArea mensajeSistema;
     @FXML
     private Label name;
     @FXML
@@ -60,6 +66,32 @@ public class Tablero {
         }
         name.setText(nombre);
 
+    }
+    @FXML
+    protected void onAvanzarTurnoClick() {
+        if (partida != null) {
+            partida.avanzarTurno();               // ejecuta lógica
+            actualizarTablero();                  // actualiza la vista
+            mensajeSistema.appendText("Turno " + partida.getTurnoGlobal() + " iniciado.\n");
+        }
+    }
+    @FXML
+    protected void onVerLogButtonClick() {
+        if (partida != null) {
+            mensajeSistema.appendText("--- LOG TEXTO ---\n" + partida.getLogger().toString());
+            mensajeSistema.appendText("--- LOG GRAFO ---\n" + partida.getLogger().mostrarLogGrafo());
+        } else {
+            mensajeSistema.appendText("Error: partida no cargada.\n");
+        }
+    }
+
+    private void mostrarInfoUnidad(Unidad u) {
+        name.setText(u.getNombre());
+        HP.setText(String.valueOf(u.getHp()));
+        Atack.setText(String.valueOf(u.getAtaque()));
+        Defend.setText(String.valueOf(u.getDefensa()));
+        RangeMovement.setText(String.valueOf(u.getRangoMovimiento()));
+        RangeAtack.setText(String.valueOf(u.getRangoAtaque()));
     }
     @FXML
     protected void onCerrarButtonClick(){
@@ -101,6 +133,30 @@ public class Tablero {
 
 
     }
+    private void actualizarTablero() {
+        tablero.getChildren().clear();
+
+        for (int fila = 0; fila < partida.getTablero().getFilas(); fila++) {
+            for (int col = 0; col < partida.getTablero().getColumnas(); col++) {
+                Casilla casilla = partida.getTablero().getCasilla(fila, col);
+                Button celda = new Button();
+                celda.setPrefSize(60, 60);
+
+                if (casilla.estaOcupada()) {
+                    Unidad u = casilla.getUnidadActual();
+                    celda.setText(u.getNombre().substring(0, 2));
+                    celda.setStyle(u.getNombre().contains("J1") ?
+                            "-fx-background-color: lightblue;" : "-fx-background-color: lightcoral;");
+                    celda.setOnAction(e -> mostrarInfoUnidad(u));
+                } else {
+                    celda.setText("");
+                    celda.setStyle("-fx-background-color: beige;");
+                }
+
+                tablero.add(celda, col, fila);
+            }
+        }
+    }
 
     public void recibirDatos(String nombre, String equipoTxt, int numTurnos, String tamTablero) {
         this.nombre = nombre;
@@ -116,6 +172,11 @@ public class Tablero {
         alert.setContentText(sTexto);
         alert.showAndWait();
     }
+    public void setPartida(Partida partida) {
+        this.partida = partida;
+        actualizarTablero(); // ← Si ya lo tienes implementado
+    }
+
 
 
 

@@ -11,6 +11,8 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
+import juego.*;
+
 
 
 
@@ -58,23 +60,27 @@ public class Turnos {
         RadioButton seleccion = (RadioButton) sizetab.getSelectedToggle();
         tamTablero = seleccion.getText();
 
-
-        String datos = "Numero Turnos : " + valor + "\n";
-        datos = datos + "TamTablero : " + tamTablero + "\n";
-        datos = datos + "Equipo : " + equipoTxt + "\n";
-        datos = datos + "Nombre : " + nombre + "\n";
-        mostrarMensaje(datos);
-
+        // Creamos la nueva escena
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(Tablero.class.getResource("TableroPartida.fxml"));
         try {
             Parent root = fxmlLoader.load();
 
-            // Obtener el controlador de la nueva ventana
+            // Crear partida real
+            int filas = Integer.parseInt(tamTablero.split("X")[0]);
+            int columnas = Integer.parseInt(tamTablero.split("X")[1]);
+            Partida partida = new Partida(filas, columnas, nombre, "IA", valor);
+
+// Pasar la partida al controlador del tablero
             Tablero controlador = fxmlLoader.getController();
+            controlador.setPartida(partida);  // << ¡Esto es clave!
+
+
+
+            // También puedes pasarle los datos como antes si quieres mantenerlos
             controlador.recibirDatos(nombre, equipoTxt, valor, tamTablero);
 
-
+            // Continuar creando la escena
             Scene scene2 = new Scene(root, 636.0, 580.0);
             stage.setTitle("TABLERO");
             stage.setScene(scene2);
@@ -86,9 +92,8 @@ public class Turnos {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
+
 
 
     public void mostrarMensaje(String sTexto) {

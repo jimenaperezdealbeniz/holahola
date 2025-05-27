@@ -7,12 +7,18 @@
     <children>
         <ButtonBar prefHeight="40.0" prefWidth="200.0">
             <buttons>
+                <Button onAction="#onVerLogButtonClick" prefHeight="25.0" text="Ver Log" />
                 <Button mnemonicParsing="false" onAction="#onCerrarButtonClick" prefHeight="25.0" text="Cerrar" />
                 <Button mnemonicParsing="false" onAction="#onInicioButtonClick" prefHeight="22.0" prefWidth="134.0" text="Cargar Tablero" />
                 <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onGuardarButtonClick" prefHeight="25.0" prefWidth="203.0" text="Guardar" />
             </buttons>
         </ButtonBar>
         <GridPane fx:id="tablero" prefHeight="403.0" prefWidth="511.0">
+            <TextArea fx:id="mensajeSistema"
+                      prefHeight="100.0"
+                      prefWidth="600.0"
+                      editable="false"
+                      wrapText="true" />
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -20,6 +26,10 @@
             </rowConstraints>
         </GridPane>
         <HBox prefHeight="28.0" prefWidth="626.0" spacing="20.0">
+            <HBox spacing="10">
+                <Button onAction="#onAvanzarTurnoClick" text="Avanzar Turno" />
+                <Button onAction="#onVerLogButtonClick" text="Ver Log" />
+            </HBox>
             <children>
                 <HBox prefHeight="100.0" prefWidth="200.0" spacing="10.0">
                     <children>
